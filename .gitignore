@@ -1,0 +1,13 @@
+# C build output
+*.o
+*.exe
+ds_miniproject
+a.out
+
+# Python
+venv/
+__pycache__/
+
+# Data and secrets
+data/full/
+.env
