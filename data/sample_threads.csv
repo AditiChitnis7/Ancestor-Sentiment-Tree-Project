@@ -1,0 +1,5 @@
+id,parent_id,score
+r,,-0.8
+a1,a,0.9
+a,r,0.6
+b,r,0.4
