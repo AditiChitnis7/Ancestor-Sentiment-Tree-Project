@@ -155,15 +155,37 @@ void print_tree(Node *n,int depth){
     while (c) { Node *next = c->next_sibling; free_tree(c); c = next; }
     free(n);
 }*/
+static void sum_tree(Node *n, double *sum, int *count) {
+    *sum += n->own;
+    (*count)++;
+    for (Node *c = n->first_child; c; c = c->next_sibling)
+        sum_tree(c, sum, count);
+}
+
+void print_table(Node **roots, int n, double w) {
+    printf("root_id,size,root_only,flat_mean,propagated\n");
+    for (int i = 0; i < n; i++) {
+        double sum = 0.0;
+        int count = 0;
+        sum_tree(roots[i], &sum, &count);
+        double prop = propogate(roots[i], w);
+        printf("%s,%d,%.4f,%.4f,%.4f\n",
+               roots[i]->id, count, roots[i]->own, sum / count, prop);
+    }
+}
 
 int main(int argc, char **argv) {
     if (argc < 2) { fprintf(stderr, "usage: %s file.csv\n", argv[0]); return 1; }
     Node **roots;
     int n = load_csv(argv[1], &roots);
     if (n < 0) return 1;
-    for (int i = 0; i < n; i++) {
-        propogate(roots[i], 0.3);
-        print_tree(roots[i], 0);
+        if (argc > 2 && strcmp(argv[2], "table") == 0) {
+        print_table(roots, n, 0.3);
+    } else {
+        for (int i = 0; i < n; i++) {
+            propogate(roots[i], 0.3);
+            print_tree(roots[i], 0);
+        }
     }
     for (int i = 0; i < n_nodes; i++) free(all_nodes[i]);
     free(all_nodes); free(roots); table_free();
